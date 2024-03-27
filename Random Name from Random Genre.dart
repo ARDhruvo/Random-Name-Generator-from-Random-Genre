@@ -1,6 +1,8 @@
 /* 
  * @author Kashikizu
- * Initial Completion Date: dd/03/2024 (dd/mm/yyyy)
+ * Initial Creation Date: 27/03/2024 (dd/mm/yyyy)
+ * Update Date: 28/03/2025 - Added names and functions that I am too lazy to mention
+ * Initial Completion Date: ??/03/2024 (dd/mm/yyyy)
  * 
  * Things to do:
  * 1. Edit flip() to receive functions and optional functions to execute
@@ -13,6 +15,8 @@ https://www.mamanatural.com/baby-names/girls/lists/fantasy-names-for-girls/
 https://www.mamanatural.com/baby-names/boys/lists/fantasy-names-for-boys/
 https://www.thoughtco.com/most-common-us-surnames-1422656
 https://www.ssa.gov/oact/babynames/decades/century.html
+https://blog.prepscholar.com/unique-cool-last-names
+https://student-tutor.com/blog/200-iconic-fantasy-last-names-for-your-next-bestseller/
 */
 
 import 'dart:math';
@@ -30,7 +34,11 @@ class Generator extends NameCalc {
       print("No names were generated");
     } else {
       print("$n names were generated");
-      flip(firstFemaleNames, firstMaleNames, lastNames, n, nameGen);
+      for (int i = 0; i < n; i++) {
+        int s = i + 1;
+        int nameType = univRoll(3);
+        nameRoll(nameType, s, 0, types);
+      }
     }
   }
 }
@@ -38,21 +46,39 @@ class Generator extends NameCalc {
 class NameCalc extends NameList {
   NameCalc() {}
 
-  void flip(var a, b, c, int n, void func(int s, var a, b)) {
-    for (int i = 0; i < n; i++) {
-      int s = i + 1;
-      int res = rand() % 2;
-      if (res == 0) {
-        func(s, a, c);
-      } else {
-        func(s, b, c);
-      }
+  void flipName(var a, b, c, int s, void func(int s, var a, b)) {
+    int res = rand() % 2;
+    if (res == 0) {
+      func(s, a, c);
+    } else {
+      func(s, b, c);
     }
   }
 
-  int rand() {
-    int value = Random().nextInt(6969);
-    return value;
+  void nameRoll(int cases, s, i, List<String> types) {
+    switch (cases) {
+      case 0:
+        {
+          //Simple Name
+          flipName(firstMaleNames, firstFemaleNames, lastNames, s, nameGen);
+          print("Name Type: ${types[i]}");
+        }
+        break;
+      case 1:
+        {
+          //Fant Name
+          flipName(firstFantMaleNames, firstFantFemaleNames, fantLastNames, s,
+              nameGen);
+          print("Name Type: ${types[i + 1]}");
+        }
+        break;
+
+      default: //Hybrid
+        {
+          int hybridRoll = univRoll(2);
+          nameRoll(hybridRoll, s, 2, types);
+        }
+    }
   }
 
   void nameGen(int ser, var firstName, lastName) {
@@ -64,7 +90,9 @@ class NameCalc extends NameList {
   }
 }
 
-class NameList {
+class NameList extends UnivCalc {
+  List<String> types = ['Regular', 'Fantasy', 'Hybrid', 'Hybrid'];
+
   var firstMaleNames = {
     0: 'Daniel',
     1: 'James',
@@ -183,7 +211,110 @@ class NameList {
     20: 'Leatrix',
   };
 
+  var fantLastNames = {
+    0: 'Abednego',
+    1: 'Cyprus',
+    2: 'Dagon',
+    3: 'Damaris',
+    4: 'Einar',
+    5: 'Festus',
+    6: 'Gallio',
+    7: 'Griffin',
+    8: 'Kami',
+    9: 'Lightfoot',
+    10: 'Luna',
+    11: 'Priestley',
+    12: 'Sierra',
+    13: 'Atwater',
+    14: 'Agassi',
+    15: 'Dobermann',
+    16: 'Akagawa',
+    17: 'Humblecut',
+    18: 'Marblemaw',
+    19: 'Desai',
+    20: 'Darby',
+  };
+
   NameList() {}
+}
+
+class UnivCalc {
+  int heads = 0, tails = 0;
+
+  int lifeCheck = 1;
+  UnivCalc() {}
+
+  void flip(int loc, n, void func(String a, int s),
+      [String? a, b, int? s, List<int>? gun]) {
+    switch (loc) {
+      case 0: //coin
+        {
+          a = "Heads";
+          b = "Tails";
+          for (int i = 0; i < n; i++) {
+            s = i + 1;
+            int res = rand() % 2;
+            if (res == 0) {
+              func(a, s);
+              heads++;
+            } else {
+              func(b, s);
+              tails++;
+            }
+          }
+        }
+        break;
+      case 1: //dice
+        {
+          //Not much to do I think
+        }
+        break;
+      case 2: //color
+        {}
+        break;
+      case 3: //roulette
+        {}
+        break;
+      case 4: //name generator
+        {}
+        break;
+      case 5: //deck of cards
+        {}
+        break;
+      case 6: //Gacha
+        {}
+        break;
+      default:
+        {
+          print("placeholder");
+        }
+    }
+  }
+
+  //Rolls to get a case out of n cases
+  int univRoll(int n) {
+    int cases = rand() % n;
+    return cases;
+  }
+
+  //Calculates % stats
+  double percCalc(int f, n) {
+    double percFace = (f / n) * 100;
+    double percRound = double.parse(percFace.toStringAsFixed(2));
+    return percRound;
+  }
+
+  //Returns a random number
+  int rand() {
+    int value = Random().nextInt(6969);
+    return value;
+  }
+
+  //Returns a random number between 10; Used for determining loop numbers
+  int gen() {
+    int value = Random().nextInt(10);
+    return value;
+  }
 
   void ocd() {
     print("");
